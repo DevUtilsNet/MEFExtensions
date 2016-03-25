@@ -20,6 +20,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		/// <value> The name of the scope full. </value>
 		string ScopeFullName { get; }
 
+
 		/// <summary> Gets the catalog. </summary>
 		///
 		/// <value> The catalog. </value>
@@ -29,6 +30,11 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		///
 		/// <value> The provider. </value>
 		CompositionContainer Container { get; }
+
+		/// <summary> Gets the manager for parent. </summary>
+		///
+		/// <value> The parent manager. </value>
+		ICompositionScopeManager ParentManager { get; }
 
 		/// <summary> Creates composition scope manager. </summary>
 		///

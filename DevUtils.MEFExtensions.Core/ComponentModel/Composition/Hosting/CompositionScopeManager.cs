@@ -7,11 +7,10 @@ using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 {
 	sealed class CompositionScopeManager
-			: ICompositionScopeManager
+		: ICompositionScopeManager
 	{
 		private readonly bool _cascadeDelete;
 		private readonly ComposablePartCatalog _customCatalog;
-		private readonly ICompositionScopeManager _parentManager;
 		private readonly Lazy<CompositionContainer> _lazyContainer;
 		private readonly IComposablePartCatalogFactory _catalogFactory;
 		private readonly Lazy<ComposablePartCatalog> _lazyComposablePartCatalog;
@@ -24,7 +23,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		{
 			get
 			{
-				var parentFullName = _parentManager?.Container.GetExportedValue<ICompositionScopeManager>().ScopeFullName;
+				var parentFullName = ParentManager?.Container.GetExportedValue<ICompositionScopeManager>().ScopeFullName;
 				if (string.IsNullOrEmpty(parentFullName))
 				{
 					return ScopeName;
@@ -35,36 +34,49 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			}
 		}
 
+		public ICompositionScopeManager ParentManager { get; set; }
+
 		public CompositionContainer Container => _lazyContainer.Value;
 
 		public ComposablePartCatalog Catalog => _lazyComposablePartCatalog.Value;
 
 		public CompositionScopeManager(
-				IComposablePartCatalogFactory catalogFactory)
-				: this(null, null, true)
+			IComposablePartCatalogFactory catalogFactory)
+			: this(null, false, null)
 		{
 			_catalogFactory = catalogFactory;
 		}
 
-		public CompositionScopeManager(string scope, CompositionScopeManager parentManager, bool cascadeDelete)
-				: this(scope, cascadeDelete, null, parentManager)
+		public CompositionScopeManager(
+			string scope,
+			IComposablePartCatalogFactory catalogFactory)
+			: this(scope, false, null)
+		{
+			_catalogFactory = catalogFactory;
+		}
+
+		public CompositionScopeManager(
+			string scope, 
+			bool cascadeDelete, 
+			CompositionScopeManager parentManager)
+			: this(scope, cascadeDelete, null, parentManager)
 		{
 		}
 
 		public CompositionScopeManager(
-				string scope,
-				bool cascadeDelete,
-				ComposablePartCatalog customCatalog,
-				CompositionScopeManager parentManager)
+			string scope,
+			bool cascadeDelete,
+			ComposablePartCatalog customCatalog,
+			CompositionScopeManager parentManager)
 		{
 			ScopeName = scope;
 			_cascadeDelete = cascadeDelete;
 			_customCatalog = customCatalog;
-			_parentManager = parentManager;
+			ParentManager = parentManager;
 			_lazyContainer = new Lazy<CompositionContainer>(ContainerFactory);
 			_lazyComposablePartCatalog = new Lazy<ComposablePartCatalog>(ComposablePartCatalogFactory);
 
-			if (_parentManager != null)
+			if (ParentManager != null)
 			{
 				_catalogFactory = parentManager._catalogFactory;
 			}
@@ -85,20 +97,20 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		private CompositionContainer ContainerFactory()
 		{
-			var catalog = new AggregateCatalog(Catalog, new TypeCatalog(typeof(CompositionScopeManagerDisposeGuard)));
+			var catalog = new AggregateCatalog(Catalog, new TypeCatalog(typeof (CompositionScopeManagerDisposeGuard)));
 
 			CompositionContainer ret;
-			if (_parentManager == null)
+			if (ParentManager == null)
 			{
 				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
 			}
 			else
 			{
-				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection, _parentManager.Container);
+				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection, ParentManager.Container);
 
 				if (_cascadeDelete)
 				{
-					_disposeGuard = _parentManager.Container.GetExportedValue<CompositionScopeManagerDisposeGuard>();
+					_disposeGuard = ParentManager.Container.GetExportedValue<CompositionScopeManagerDisposeGuard>();
 					_disposeGuard.Add(this);
 				}
 			}
@@ -126,7 +138,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		{
 			CheckScopeName(scope);
 
-			var ret = new CompositionScopeManager(scope, this, cascadeDelete);
+			var ret = new CompositionScopeManager(scope, cascadeDelete, this);
 			return ret;
 		}
 
@@ -154,6 +166,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			{
 				_lazyContainer.Value.Dispose();
 			}
+
+			ParentManager = null;
 		}
 
 		#endregion

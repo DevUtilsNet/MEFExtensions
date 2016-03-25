@@ -14,7 +14,6 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			, INotifyComposablePartCatalogChanged
 	{
 		private volatile bool _isDisposed;
-		private readonly string _scopeFull;
 		private readonly object _lock = new object();
 
 		private ComposablePartCatalog _rootCatalog;
@@ -22,24 +21,15 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		#region Implementation of ICompositionElement
 
-		public string DisplayName
-		{
-			get
-			{
-				return _scopeFull;
-			}
-		}
+		public string DisplayName { get; }
 
-		public ICompositionElement Origin
-		{
-			get { return _rootCatalog as ICompositionElement; }
-		}
+		public ICompositionElement Origin => _rootCatalog as ICompositionElement;
 
 		#endregion
 
-		public DataAnnotationsCatalog(ComposablePartCatalog rootCatalog, string scopeFull)
+		public DataAnnotationsCatalog(ComposablePartCatalog rootCatalog, string scopeFullName)
 		{
-			_scopeFull = scopeFull;
+			DisplayName = scopeFullName;
 			_rootCatalog = rootCatalog;
 
 			var notifyCatalog = _rootCatalog as INotifyComposablePartCatalogChanged;
@@ -52,7 +42,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		private bool ScopeEquals(string scope)
 		{
-			var ret = (string.IsNullOrEmpty(scope) && string.IsNullOrEmpty(_scopeFull)) || string.Equals(scope, _scopeFull);
+			var ret = (string.IsNullOrEmpty(scope) && string.IsNullOrEmpty(DisplayName)) || string.Equals(scope, DisplayName);
 			return ret;
 		}
 
@@ -142,13 +132,13 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		protected virtual void OnChanged(ComposablePartCatalogChangeEventArgs e)
 		{
-			EventHandler<ComposablePartCatalogChangeEventArgs> changedEvent = Changed;
+			var changedEvent = Changed;
 			changedEvent?.Invoke(this, e);
 		}
 
 		protected virtual void OnChanging(ComposablePartCatalogChangeEventArgs e)
 		{
-			EventHandler<ComposablePartCatalogChangeEventArgs> changingEvent = Changing;
+			var changingEvent = Changing;
 			changingEvent?.Invoke(this, e);
 		}
 

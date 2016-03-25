@@ -20,12 +20,12 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		/// <summary> Gets composable part catalog. </summary>
 		///
-		/// <param name="scopeFull"> The scope full. </param>
+		/// <param name="scopeFullName"> The scope full. </param>
 		///
 		/// <returns> The composable part catalog. </returns>
-		public ComposablePartCatalog GetComposablePartCatalog(string scopeFull)
+		public ComposablePartCatalog GetComposablePartCatalog(string scopeFullName)
 		{
-			var ret = new DataAnnotationsCatalog(_rootCatalog, scopeFull);
+			var ret = new DataAnnotationsCatalog(_rootCatalog, scopeFullName);
 			return ret;
 		}
 	}

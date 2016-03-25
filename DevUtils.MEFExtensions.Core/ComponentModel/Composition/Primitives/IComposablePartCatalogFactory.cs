@@ -7,9 +7,9 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives
 	{
 		/// <summary> Gets composable part catalog. </summary>
 		///
-		/// <param name="scopeFull"> The scope full. </param>
+		/// <param name="scopeFullName"> The scope full. </param>
 		///
 		/// <returns> The composable part catalog. </returns>
-		ComposablePartCatalog GetComposablePartCatalog(string scopeFull);
+		ComposablePartCatalog GetComposablePartCatalog(string scopeFullName);
 	}
 }

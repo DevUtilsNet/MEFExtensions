@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
@@ -42,10 +43,6 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 		, ICompositionScopeRootTestsExport2
 	{
 		public bool DisposeWasCalling { get; set; }
-
-		public CompositionScopeRootTestsExportAll()
-		{
-		}
 
 		#region Implementation of IDisposable
 
@@ -105,6 +102,34 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 		#endregion
 	}
 
+	[Export]
+	[ApplicationExport(typeof(IApplicationModule))]
+	class CompositionScopeRootTestsExportApplication
+		: IDisposable
+		, IApplicationModule
+	{
+		public bool DisposeWasCalling { get; set; }
+		public bool InitializeWasCalling { get; set; }
+
+		#region Implementation of IDisposable
+
+		public void Dispose()
+		{
+			DisposeWasCalling = true;
+		}
+
+		#endregion
+
+		#region Implementation of IScopeModule
+
+		public void Initialize()
+		{
+			InitializeWasCalling = true;
+		}
+
+		#endregion
+	}
+
 	[TestClass]
 	public class CompositionScopeRootTests
 	{
@@ -140,7 +165,7 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 						Assert.AreEqual(new TestExportAttribute().ScopeFullName, manager2.ScopeFullName);
 
 						Assert.IsTrue(manager2.Container.GetExportedValues<ICompositionScopeManager>().Select(s => s.ScopeName).SequenceEqual(
-							new []
+							new[]
 							{
 								TestExportAttribute.TestScopeName,
 								ApplicationExportAttribute.ApplicationScopeName,
@@ -153,6 +178,10 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 								new ApplicationExportAttribute().ScopeFullName,
 								null
 							}));
+
+						Assert.AreEqual(manager1, manager2.ParentManager);
+						Assert.AreEqual(manager0, manager1.ParentManager);
+						Assert.IsNull(manager0.ParentManager);
 					}
 				}
 			}
@@ -252,6 +281,38 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			Assert.IsFalse(value2.DisposeWasCalling);
 			Assert.IsTrue(value1.DisposeWasCalling);
 			Assert.IsTrue(value0.DisposeWasCalling);
+		}
+
+		[TestMethod]
+		public void CreateRootScopeManagerTest07()
+		{
+			var manager0 = CompositionScopeRoot.CreateRootScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+			var value0 = manager0.Container.GetExportedValue<ICompositionScopeRootTestsExport0>();
+
+			var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName);
+
+			var value1 = manager1.Container.GetExportedValue<ICompositionScopeRootTestsExport1>();
+
+			manager0.Dispose();
+
+			Assert.IsTrue(value1.DisposeWasCalling);
+			Assert.IsTrue(value0.DisposeWasCalling);
+
+			manager1.Dispose();
+		}
+
+		[TestMethod]
+		public void CreateApplicationScopeManagerTest01()
+		{
+			var manager0 = CompositionScopeRoot.CreateApplicationScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+			var value = manager0.Container.GetExportedValue<CompositionScopeRootTestsExportApplication>();
+
+			Assert.IsFalse(value.DisposeWasCalling);
+			Assert.IsTrue(value.InitializeWasCalling);
+
+			manager0.Dispose();
+
+			Assert.IsTrue(value.DisposeWasCalling);
 		}
 	}
 }
