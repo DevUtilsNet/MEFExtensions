@@ -52,10 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManager.cs" />
+    <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManagerDisposeGuard.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeRoot.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\DataAnnotationsComposablePartCatalogFactory.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\IComposablePartCatalogFactory.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsCatalog.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsComposablePartCatalogFactory.cs" />
+    <Compile Include="ComponentModel\Composition\Hosting\Extensions\ComposablePartDefinitionExtensions.cs" />
+    <Compile Include="ComponentModel\Composition\Primitives\IComposablePartCatalogFactory.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\ICompositionScopeManager.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\ScopedExportAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

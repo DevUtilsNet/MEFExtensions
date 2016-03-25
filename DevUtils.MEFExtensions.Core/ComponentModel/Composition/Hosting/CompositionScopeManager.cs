@@ -2,121 +2,147 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 {
-    sealed class CompositionScopeManager
-        : ICompositionScopeManager
-    {
-        private readonly ComposablePartCatalog _customCatalog;
-        private readonly ICompositionScopeManager _parentManager;
-        private readonly Lazy<ExportProvider> _lazyExportProvider;
-        private readonly IComposablePartCatalogFactory _catalogFactory;
-        private readonly Lazy<ComposablePartCatalog> _lazyComposablePartCatalog;
+	sealed class CompositionScopeManager
+			: ICompositionScopeManager
+	{
+		private readonly ComposablePartCatalog _customCatalog;
+		private readonly ICompositionScopeManager _parentManager;
+		private readonly Lazy<CompositionContainer> _lazyContainer;
+		private readonly IComposablePartCatalogFactory _catalogFactory;
+		private readonly Lazy<ComposablePartCatalog> _lazyComposablePartCatalog;
 
-        public string ScopeName { get; }
+		private CompositionScopeManagerDisposeGuard _disposeGuard;
 
-        public string ScopeFullName
-        {
-            get
-            {
-                var parentFullName = ExportProvider?.GetExportedValue<ICompositionScopeManager>().ScopeFullName;
-                if (string.IsNullOrEmpty(parentFullName))
-                {
-                    return ScopeName;
-                }
+		public string ScopeName { get; }
 
-                var ret = parentFullName + "/" + ScopeName;
-                return ret;
-            }
-        }
+		public string ScopeFullName
+		{
+			get
+			{
+				var parentFullName = _parentManager?.Container.GetExportedValue<ICompositionScopeManager>().ScopeFullName;
+				if (string.IsNullOrEmpty(parentFullName))
+				{
+					return ScopeName;
+				}
 
-        public ExportProvider ExportProvider => _lazyExportProvider.Value;
+				var ret = parentFullName + "/" + ScopeName;
+				return ret;
+			}
+		}
 
-        public ComposablePartCatalog Catalog => _lazyComposablePartCatalog.Value;
+		public CompositionContainer Container => _lazyContainer.Value;
 
-        public CompositionScopeManager(
-            IComposablePartCatalogFactory catalogFactory)
-            : this(null, null)
-        {
-            _catalogFactory = catalogFactory;
-        }
+		public ComposablePartCatalog Catalog => _lazyComposablePartCatalog.Value;
 
-        public CompositionScopeManager(
-            string scope,
-            CompositionScopeManager parentManager)
-            : this(scope, null, parentManager)
-        {
-        }
+		public CompositionScopeManager(
+				IComposablePartCatalogFactory catalogFactory)
+				: this(null, null)
+		{
+			_catalogFactory = catalogFactory;
+		}
 
-        public CompositionScopeManager(
-            string scope,
-            ComposablePartCatalog catalog,
-            CompositionScopeManager parentManager)
-        {
-            ScopeName = scope;
-            _customCatalog = catalog;
-            _parentManager = parentManager;
-            _lazyExportProvider = new Lazy<ExportProvider>(ExportProviderFactory);
-            _lazyComposablePartCatalog = new Lazy<ComposablePartCatalog>(ComposablePartCatalogFactory);
+		public CompositionScopeManager(
+				string scope,
+				CompositionScopeManager parentManager)
+				: this(scope, null, parentManager)
+		{
+		}
 
-            if (_parentManager != null)
-            {
-                _catalogFactory = parentManager._catalogFactory;
-            }
-        }
+		public CompositionScopeManager(
+				string scope,
+				ComposablePartCatalog catalog,
+				CompositionScopeManager parentManager)
+		{
+			ScopeName = scope;
+			_customCatalog = catalog;
+			_parentManager = parentManager;
+			_lazyContainer = new Lazy<CompositionContainer>(ContainerFactory);
+			_lazyComposablePartCatalog = new Lazy<ComposablePartCatalog>(ComposablePartCatalogFactory);
 
-        private static void CheckScopeName(string scope)
-        {
-            if (string.IsNullOrEmpty(scope))
-            {
-                throw new ArgumentException("The Scope name cannot be null or empty", nameof(scope));
-            }
+			if (_parentManager != null)
+			{
+				_catalogFactory = parentManager._catalogFactory;
+			}
+		}
 
-            if (scope.IndexOf('/') != -1)
-            {
-                throw new ArgumentException("The Scope name cannot contain '/'", nameof(scope));
-            }
-        }
+		private static void CheckScopeName(string scope)
+		{
+			if (string.IsNullOrEmpty(scope))
+			{
+				throw new ArgumentException("The Scope name cannot be null or empty", nameof(scope));
+			}
 
-        private ExportProvider ExportProviderFactory()
-        {
-            var ret = _parentManager.ExportProvider == null
-                ? new CompositionContainer(Catalog, CompositionOptions.DisableSilentRejection)
-                : new CompositionContainer(Catalog, CompositionOptions.DisableSilentRejection, _parentManager.ExportProvider);
+			if (scope.IndexOf('/') != -1)
+			{
+				throw new ArgumentException("The Scope name cannot contain '/'", nameof(scope));
+			}
+		}
 
-            var batch = new CompositionBatch();
-            batch.AddExportedValue<ICompositionScopeManager>(this);
-            ret.Compose(batch);
+		private CompositionContainer ContainerFactory()
+		{
+			var catalog = new AggregateCatalog(Catalog, new TypeCatalog(typeof(CompositionScopeManagerDisposeGuard)));
 
-            return ret;
-        }
+			CompositionContainer ret;
+			if (_parentManager == null)
+			{
+				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
+			}
+			else
+			{
+				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection, _parentManager.Container);
 
-        private ComposablePartCatalog ComposablePartCatalogFactory()
-        {
-            if (_customCatalog != null)
-            {
-                return _customCatalog;
-            }
+				_disposeGuard = _parentManager.Container.GetExportedValue<CompositionScopeManagerDisposeGuard>();
+				_disposeGuard.Add(this);
+			}
 
-            var ret = _catalogFactory.GetComposablePartCatalog(ScopeFullName);
-            return ret;
-        }
+			var batch = new CompositionBatch();
+			batch.AddExportedValue<ICompositionScopeManager>(this);
+			ret.Compose(batch);
 
-        public ICompositionScopeManager CreateCompositionScopeManager(string scope)
-        {
-            CheckScopeName(scope);
+			return ret;
+		}
 
-            var ret = new CompositionScopeManager(scope, this);
-            return ret;
-        }
+		private ComposablePartCatalog ComposablePartCatalogFactory()
+		{
+			var ret = _customCatalog ?? _catalogFactory.GetComposablePartCatalog(ScopeFullName);
+			return ret;
+		}
 
-        public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog catalog)
-        {
-            CheckScopeName(scope);
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope)
+		{
+			CheckScopeName(scope);
 
-            var ret = new CompositionScopeManager(scope, catalog, this);
-            return ret;
-        }
-    }
+			var ret = new CompositionScopeManager(scope, this);
+			return ret;
+		}
+
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog catalog)
+		{
+			CheckScopeName(scope);
+
+			var ret = new CompositionScopeManager(scope, catalog, this);
+			return ret;
+		}
+
+		#region Implementation of IDisposable
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			_disposeGuard?.Remove(this);
+
+			if (_lazyContainer.IsValueCreated)
+			{
+				_lazyContainer.Value.Dispose();
+			}
+		}
+
+		#endregion
+	}
 }
