@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.Composition.Primitives;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
@@ -9,6 +11,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			: IComposablePartCatalogFactory
 	{
 		private readonly ComposablePartCatalog _rootCatalog;
+		private readonly Dictionary<string, ComposablePartCatalog> _cachedCatalogs = new Dictionary<string, ComposablePartCatalog>();
 
 		/// <summary> Constructor. </summary>
 		///
@@ -25,7 +28,18 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <returns> The composable part catalog. </returns>
 		public ComposablePartCatalog GetComposablePartCatalog(string scopeFullName)
 		{
-			var ret = new DataAnnotationsCatalog(_rootCatalog, scopeFullName);
+			scopeFullName = scopeFullName ?? string.Empty;
+
+			ComposablePartCatalog ret;
+			lock (_cachedCatalogs)
+			{
+				if (!_cachedCatalogs.TryGetValue(scopeFullName, out ret))
+				{
+					ret = new DataAnnotationsCatalog(_rootCatalog, scopeFullName);
+					_cachedCatalogs[scopeFullName] = ret;
+				}
+			}
+
 			return ret;
 		}
 	}
