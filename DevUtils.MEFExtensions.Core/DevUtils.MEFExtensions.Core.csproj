@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentModel\Composition\DataAnnotations\ApplicationExportAttribute.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManager.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManagerDisposeGuard.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeRoot.cs" />

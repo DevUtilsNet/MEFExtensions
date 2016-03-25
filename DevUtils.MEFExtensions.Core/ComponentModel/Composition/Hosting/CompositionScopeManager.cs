@@ -9,6 +9,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 	sealed class CompositionScopeManager
 			: ICompositionScopeManager
 	{
+		private readonly bool _cascadeDelete;
 		private readonly ComposablePartCatalog _customCatalog;
 		private readonly ICompositionScopeManager _parentManager;
 		private readonly Lazy<CompositionContainer> _lazyContainer;
@@ -40,25 +41,25 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		public CompositionScopeManager(
 				IComposablePartCatalogFactory catalogFactory)
-				: this(null, null)
+				: this(null, null, true)
 		{
 			_catalogFactory = catalogFactory;
 		}
 
-		public CompositionScopeManager(
-				string scope,
-				CompositionScopeManager parentManager)
-				: this(scope, null, parentManager)
+		public CompositionScopeManager(string scope, CompositionScopeManager parentManager, bool cascadeDelete)
+				: this(scope, cascadeDelete, null, parentManager)
 		{
 		}
 
 		public CompositionScopeManager(
 				string scope,
-				ComposablePartCatalog catalog,
+				bool cascadeDelete,
+				ComposablePartCatalog customCatalog,
 				CompositionScopeManager parentManager)
 		{
 			ScopeName = scope;
-			_customCatalog = catalog;
+			_cascadeDelete = cascadeDelete;
+			_customCatalog = customCatalog;
 			_parentManager = parentManager;
 			_lazyContainer = new Lazy<CompositionContainer>(ContainerFactory);
 			_lazyComposablePartCatalog = new Lazy<ComposablePartCatalog>(ComposablePartCatalogFactory);
@@ -95,8 +96,11 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			{
 				ret = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection, _parentManager.Container);
 
-				_disposeGuard = _parentManager.Container.GetExportedValue<CompositionScopeManagerDisposeGuard>();
-				_disposeGuard.Add(this);
+				if (_cascadeDelete)
+				{
+					_disposeGuard = _parentManager.Container.GetExportedValue<CompositionScopeManagerDisposeGuard>();
+					_disposeGuard.Add(this);
+				}
 			}
 
 			var batch = new CompositionBatch();
@@ -114,25 +118,34 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		public ICompositionScopeManager CreateCompositionScopeManager(string scope)
 		{
-			CheckScopeName(scope);
-
-			var ret = new CompositionScopeManager(scope, this);
+			var ret = CreateCompositionScopeManager(scope, true);
 			return ret;
 		}
 
-		public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog catalog)
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete)
 		{
 			CheckScopeName(scope);
 
-			var ret = new CompositionScopeManager(scope, catalog, this);
+			var ret = new CompositionScopeManager(scope, this, cascadeDelete);
+			return ret;
+		}
+
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog customCatalog)
+		{
+			var ret = CreateCompositionScopeManager(scope, true, customCatalog);
+			return ret;
+		}
+
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete, ComposablePartCatalog customCatalog)
+		{
+			CheckScopeName(scope);
+
+			var ret = new CompositionScopeManager(scope, cascadeDelete, customCatalog, this);
 			return ret;
 		}
 
 		#region Implementation of IDisposable
 
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
 		public void Dispose()
 		{
 			_disposeGuard?.Remove(this);

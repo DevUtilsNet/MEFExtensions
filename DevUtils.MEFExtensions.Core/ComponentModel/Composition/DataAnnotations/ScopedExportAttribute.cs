@@ -12,7 +12,21 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <summary> Gets or sets the name of the scope full. </summary>
 		///
 		/// <value> The name of the scope full. </value>
-		public string ScopeFullName { get; private set; }
+		public string ScopeFullName { get; set; }
+
+		/// <summary> Default constructor. </summary>
+		public ScopedExportAttribute()
+		{
+		}
+
+		/// <summary> Constructor. </summary>
+		///
+		/// <param name="contractType"> Type of the contract. </param>
+		public ScopedExportAttribute(Type contractType)
+			: base(contractType)
+		{
+			
+		}
 
 		/// <summary> Constructor. </summary>
 		///

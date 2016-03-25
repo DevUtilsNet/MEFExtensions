@@ -80,7 +80,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		private bool Filter(ComposablePartDefinition definition)
 		{
 			var definitionWasChecked = false;
-			foreach (var item in definition.GetExportMetadataValueWithKey("ScopeFullName"))
+
+			foreach (var item in definition.GetExportMetadataValueWithKey(nameof(ScopedExportAttribute.ScopeFullName)))
 			{
 				if (!definitionWasChecked)
 				{
