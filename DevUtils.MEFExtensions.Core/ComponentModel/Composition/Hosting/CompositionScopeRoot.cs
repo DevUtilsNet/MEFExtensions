@@ -1,5 +1,5 @@
-﻿using DevUtils.MEFExtensions.Core.Collections.Generic.Extensions;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
+﻿using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
@@ -24,7 +24,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		public static ICompositionScopeManager CreateApplicationScopeManager(IComposablePartCatalogFactory catalogFactory)
 		{
 			var ret = new CompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName, catalogFactory);
-			ret.Container.GetExportedValues<IApplicationModule>().ForEach(f => f.Initialize());
+			ret.Container.InitializeModules<IApplicationModule>();
 			return ret;
 		}
 	}

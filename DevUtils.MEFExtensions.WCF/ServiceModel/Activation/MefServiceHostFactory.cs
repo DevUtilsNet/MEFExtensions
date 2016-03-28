@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
 using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations;
+using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.Primitives;
 using DevUtils.MEFExtensions.WCF.ServiceModel.Description;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 
 namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 {
@@ -12,15 +15,37 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 	public sealed class MefServiceHostFactory
 				 : ServiceHostFactory
 	{
-		/// <summary> Gets or sets the composition scope manager action. </summary>
-		///
-		/// <value> The composition scope manager action. </value>
-		public static Func<ServiceHost, ICompositionScopeManager> CompositionScopeManagerAction { get; set; }
+		/// <summary> Name of the instance scope. </summary>
+		public static string InstanceScopeName { get; set; } = InstanceExportAttribute.InstanceScopeName;
 
-		private static void AddBehavior(Type serviceType, ServiceHost serviceHost)
+		/// <summary> Gets or sets the name of the service host scope. </summary>
+		///
+		/// <value> The name of the service host scope. </value>
+		public static string ServiceHostScopeName { get; set; } = ServiceHostExportAttribute.ServiceHostScopeName;
+
+		/// <summary> Gets or sets the manager for application scope. </summary>
+		///
+		/// <value> The application scope manager. </value>
+		public static ICompositionScopeManager ApplicationScopeManager { get; set; }
+
+		private static void AddBehavior(Type serviceType, ServiceHost serviceHost, ICompositionScopeManager scopeManager)
 		{
-			var scopeManager = CompositionScopeManagerAction(serviceHost);
 			serviceHost.Description.Behaviors.Add(new MefDependencyInjectionServiceBehavior(serviceType, scopeManager));
+		}
+
+		private static void OnOpening(Type serviceType, object sender)
+		{
+			var scopeManager = ApplicationScopeManager.CreateCompositionScopeManager(ServiceHostScopeName);
+
+			scopeManager.Container.InitializeModules<IServiceHostModule>();
+
+			AddBehavior(serviceType, (ServiceHost)sender, scopeManager);
+		}
+
+		private static void OnClosing(object sender, EventArgs eventArgs)
+		{
+			var behavior = ((ServiceHost)sender).Description.Behaviors.Find<MefDependencyInjectionServiceBehavior>();
+			behavior?.ScopeManager.Dispose();
 		}
 
 		#region Overrides of ServiceHostFactory
@@ -34,16 +59,17 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 		/// <param name="serviceType">Specifies the type of service to host. </param><param name="baseAddresses">The <see cref="T:System.Array"/> of type <see cref="T:System.Uri"/> that contains the base addresses for the service hosted.</param>
 		protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
 		{
-			if (CompositionScopeManagerAction == null)
+			if (ApplicationScopeManager == null)
 			{
-				throw new InvalidOperationException("The MefServiceHostFactory.CompositionScopeManagerAction static property must be set before services can be instantiated.");
+				throw new InvalidOperationException("The MefServiceHostFactory.RootScopeManager static property must be set before services can be instantiated.");
 			}
 
 			var ret = base.CreateServiceHost(serviceType, baseAddresses);
 
-			if (serviceType.GetCustomAttribute(typeof(InstanceExportAttribute)) != null)
+			if (serviceType.GetCustomAttributes(typeof(InstanceExportAttribute)).Any())
 			{
-				ret.Opening += (s, a) => AddBehavior(serviceType, (ServiceHost)s);
+				ret.Opening += (s, a) => OnOpening(serviceType, s);
+				ret.Closing += OnClosing;
 			}
 
 			return ret;

@@ -2,7 +2,9 @@
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
-using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations;
+using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.Primitives;
+using DevUtils.MEFExtensions.WCF.ServiceModel.Activation;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 
 namespace DevUtils.MEFExtensions.WCF.ServiceModel.Dispatcher
 {
@@ -26,7 +28,9 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Dispatcher
 
 		public object GetInstance(InstanceContext instanceContext, Message message)
 		{
-			var manager = _scopeManager.CreateCompositionScopeManager(InstanceExportAttribute.InstanceScopeName);
+			var manager = _scopeManager.CreateCompositionScopeManager(MefServiceHostFactory.InstanceScopeName);
+
+			manager.Container.InitializeModules<IInstanceModule>();
 
 			var ret = manager.Container.GetExportedValue<T>();
 

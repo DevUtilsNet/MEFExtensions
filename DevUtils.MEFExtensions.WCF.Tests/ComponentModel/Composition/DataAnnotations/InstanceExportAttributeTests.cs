@@ -11,7 +11,7 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ComponentModel.Composition.DataAnnota
 		{
 			var att = new InstanceExportAttribute();
 
-			Assert.AreEqual("Application/Instance", att.ScopeFullName);
+			Assert.AreEqual("Application/ServiceHost/Instance", att.ScopeFullName);
 		}
 	}
 }

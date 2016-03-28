@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -25,3 +26,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
+
+[assembly: InternalsVisibleTo("DevUtils.MEFExtensions.WCF, PublicKey=00240000048000009400000006020000002400005253413100040000010001008be84e2e13e9479af5521281a174af1b5331ac60f4176e000d814c6422afc0aacc52f27cc5b2745614e6a4810d1ef2e480af3d64cd0789604dc8d9ae5eb506deb0d5d4ff6fccc2a52f1f46c4fccccca774b8b495e7378d466c6c9b861c457a01e01476aa7d1a995dc6ec609bb02f3e7005cef4f6afaf5d1b1eb8c8591a54edd3")]

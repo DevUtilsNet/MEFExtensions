@@ -14,13 +14,16 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Description
 				: IServiceBehavior
 	{
 		private readonly Type _serviceType;
-		private readonly ICompositionScopeManager _scopeManager;
+
+		public ICompositionScopeManager ScopeManager { get; }
 
 		public MefDependencyInjectionServiceBehavior(Type serviceType, ICompositionScopeManager scopeManager)
 		{
 			_serviceType = serviceType;
-			_scopeManager = scopeManager;
+			ScopeManager = scopeManager;
 		}
+
+		
 
 		#region Implementation of IServiceBehavior
 
@@ -41,7 +44,7 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Description
 			type = type.MakeGenericType(_serviceType);
 			var constructor = type.GetConstructor(new[] { typeof(ICompositionScopeManager) });
 
-			var instanceProvider = (IInstanceProvider)constructor.Invoke(new object[] { _scopeManager });
+			var instanceProvider = (IInstanceProvider)constructor.Invoke(new object[] { ScopeManager });
 
 			foreach (var item in serviceHostBase.ChannelDispatchers.OfType<ChannelDispatcher>().SelectMany(w => w.Endpoints))
 			{

@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\Debug\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,7 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\Release\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -66,6 +66,7 @@
     <Compile Include="ComponentModel\Composition\Hosting\Extensions\ComposablePartDefinitionExtensions.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\GuardedApplicationCatalog.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\GuardedDirectoryCatalog.cs" />
+    <Compile Include="ComponentModel\Composition\Hosting\Extensions\CompositionContainerExtensions.cs" />
     <Compile Include="ComponentModel\Composition\Primitives\IApplicationModule.cs" />
     <Compile Include="ComponentModel\Composition\Primitives\IComposablePartCatalogFactory.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\ICompositionScopeManager.cs" />

@@ -1,39 +1,39 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
 
-namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
+namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 {
-	/// <summary> Attribute for application export. </summary>
+	/// <summary> Attribute for service host export. </summary>
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-	public class ApplicationExportAttribute
-		: ScopedExportAttribute
+	public class ServiceHostExportAttribute
+		: ApplicationExportAttribute
 	{
 		/// <summary>
 		/// Name of the scope.
 		/// </summary>
-		public const string ApplicationScopeName = "Application";
+		public const string ServiceHostScopeName = "ServiceHost";
 
 		/// <summary> Default constructor. </summary>
-		public ApplicationExportAttribute()
-			: base(ApplicationScopeName)
+		public ServiceHostExportAttribute()
+			: base(ServiceHostScopeName, null, null)
 		{
 		}
 
 		/// <summary> Constructor. </summary>
 		///
 		/// <param name="contractType"> Type of the contract. </param>
-		public ApplicationExportAttribute(Type contractType)
-			: base(ApplicationScopeName, contractType)
+		public ServiceHostExportAttribute(Type contractType)
+			: base(ServiceHostScopeName, null, contractType)
 		{
 		}
 
 		/// <summary> Constructor. </summary>
 		///
 		/// <param name="contractName"> Name of the contract. </param>
-		public ApplicationExportAttribute(string contractName)
-			: base(ApplicationScopeName, contractName)
+		public ServiceHostExportAttribute(string contractName)
+			: base(ServiceHostScopeName, contractName, null)
 		{
 		}
 
@@ -41,8 +41,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="contractName"> Name of the contract. </param>
 		/// <param name="contractType"> Type of the contract. </param>
-		public ApplicationExportAttribute(string contractName, Type contractType)
-			: base(ApplicationScopeName, contractName, contractType)
+		public ServiceHostExportAttribute(string contractName, Type contractType)
+			: base(ServiceHostScopeName, contractName, contractType)
 		{
 		}
 
@@ -50,8 +50,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
 		/// <param name="contractName">				 Name of the contract. </param>
-		protected ApplicationExportAttribute(string descendantScopeName, string contractName)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName)
+		protected ServiceHostExportAttribute(string descendantScopeName, string contractName)
+			: base(CombainScopes(ServiceHostScopeName, descendantScopeName), contractName)
 		{
 		}
 
@@ -60,8 +60,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
 		/// <param name="contractName">				 Name of the contract. </param>
 		/// <param name="contractType">				 Type of the contract. </param>
-		protected ApplicationExportAttribute(string descendantScopeName, string contractName, Type contractType)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName, contractType)
+		protected ServiceHostExportAttribute(string descendantScopeName, string contractName, Type contractType)
+			: base(CombainScopes(ServiceHostScopeName, descendantScopeName), contractName, contractType)
 		{
 		}
 	}
