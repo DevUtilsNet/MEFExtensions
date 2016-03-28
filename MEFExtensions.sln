@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevUtils.MEFExtensions.Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevUtils.MEFExtensions.Core.Tests", "DevUtils.MEFExtensions.Core.Tests\DevUtils.MEFExtensions.Core.Tests.csproj", "{2B3EC2CE-014D-45FF-95F0-4DD16C6DCE0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevUtils.MEFExtensions.WCF", "DevUtils.MEFExtensions.WCF\DevUtils.MEFExtensions.WCF.csproj", "{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevUtils.MEFExtensions.WCF.Tests", "DevUtils.MEFExtensions.WCF.Tests\DevUtils.MEFExtensions.WCF.Tests.csproj", "{668A3411-E76C-4123-A53D-B6B81BCA47BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{2B3EC2CE-014D-45FF-95F0-4DD16C6DCE0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B3EC2CE-014D-45FF-95F0-4DD16C6DCE0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B3EC2CE-014D-45FF-95F0-4DD16C6DCE0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{668A3411-E76C-4123-A53D-B6B81BCA47BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{668A3411-E76C-4123-A53D-B6B81BCA47BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{668A3411-E76C-4123-A53D-B6B81BCA47BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{668A3411-E76C-4123-A53D-B6B81BCA47BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DevUtils.MEFExtensions.Core")]
-[assembly: AssemblyDescription("DevUtils.MEFExtensions.Core")]
+[assembly: AssemblyTitle("DevUtils.MEFExtensions.WCF")]
+[assembly: AssemblyDescription("DevUtils.MEFExtensions.WCF")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("41a09498-d14e-4713-8232-7ac61f0e7015")]
+[assembly: Guid("821444d2-4d4b-4268-acd1-6f7dd1d7af74")]
 
 // Version information for an assembly consists of the following four values:
 //

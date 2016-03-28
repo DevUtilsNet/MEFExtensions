@@ -82,7 +82,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			}
 		}
 
-		private static void CheckScopeName(string scope)
+		public static string CheckScopeName(string scope)
 		{
 			if (string.IsNullOrEmpty(scope))
 			{
@@ -93,6 +93,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			{
 				throw new ArgumentException("The Scope name cannot contain '/'", nameof(scope));
 			}
+
+			return scope;
 		}
 
 		private CompositionContainer ContainerFactory()

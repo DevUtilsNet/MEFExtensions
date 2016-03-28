@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 {
@@ -50,7 +51,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
 		/// <param name="contractName">				 Name of the contract. </param>
 		protected ApplicationExportAttribute(string descendantScopeName, string contractName)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName)
+			: base(CombainScopes(ApplicationScopeName, CompositionScopeManager.CheckScopeName(descendantScopeName)), contractName)
 		{
 		}
 
@@ -60,7 +61,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="contractName">				 Name of the contract. </param>
 		/// <param name="contractType">				 Type of the contract. </param>
 		protected ApplicationExportAttribute(string descendantScopeName, string contractName, Type contractType)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName, contractType)
+			: base(CombainScopes(ApplicationScopeName, CompositionScopeManager.CheckScopeName(descendantScopeName)), contractName, contractType)
 		{
 		}
 	}

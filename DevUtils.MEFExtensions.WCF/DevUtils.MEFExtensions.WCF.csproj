@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{41A09498-D14E-4713-8232-7AC61F0E7015}</ProjectGuid>
+    <ProjectGuid>{821444D2-4D4B-4268-ACD1-6F7DD1D7AF74}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DevUtils.MEFExtensions.Core</RootNamespace>
-    <AssemblyName>DevUtils.MEFExtensions.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>DevUtils.MEFExtensions.WCF</RootNamespace>
+    <AssemblyName>DevUtils.MEFExtensions.WCF</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\Debug\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
+    <DocumentationFile>..\Debug\DevUtils.MEFExtensions.WCF.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,8 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\Release\DevUtils.MEFExtensions.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -44,6 +41,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,23 +54,18 @@
     <Compile Include="..\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Collections\Generic\Extensions\EnumerableExtensions.cs" />
-    <Compile Include="ComponentModel\Composition\DataAnnotations\ApplicationExportAttribute.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\ComposablePartCatalogCollection.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManager.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManagerDisposeGuard.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeRoot.cs" />
-    <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsCatalog.cs" />
-    <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsComposablePartCatalogFactory.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\Extensions\ComposablePartDefinitionExtensions.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\GuardedApplicationCatalog.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\GuardedDirectoryCatalog.cs" />
-    <Compile Include="ComponentModel\Composition\Primitives\IApplicationModule.cs" />
-    <Compile Include="ComponentModel\Composition\Primitives\IComposablePartCatalogFactory.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\ICompositionScopeManager.cs" />
-    <Compile Include="ComponentModel\Composition\DataAnnotations\ScopedExportAttribute.cs" />
-    <Compile Include="ComponentModel\Composition\Primitives\IScopeModule.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\InstanceExportAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceModel\Activation\MefServiceHostFactory.cs" />
+    <Compile Include="ServiceModel\Description\MefDependencyInjectionServiceBehavior.cs" />
+    <Compile Include="ServiceModel\Dispatcher\MefInstanceProvider.cs" />
+    <Compile Include="ServiceModel\MefInstanceContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DevUtils.MEFExtensions.Core\DevUtils.MEFExtensions.Core.csproj">
+      <Project>{41A09498-D14E-4713-8232-7AC61F0E7015}</Project>
+      <Name>DevUtils.MEFExtensions.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="DevUtils.snk" />

@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2B3EC2CE-014D-45FF-95F0-4DD16C6DCE0B}</ProjectGuid>
+    <ProjectGuid>{668A3411-E76C-4123-A53D-B6B81BCA47BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DevUtils.MEFExtensions.Core.Tests</RootNamespace>
-    <AssemblyName>DevUtils.MEFExtensions.Core.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>DevUtils.MEFExtensions.WCF.Tests</RootNamespace>
+    <AssemblyName>DevUtils.MEFExtensions.WCF.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,7 +16,6 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,9 +34,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>DevUtils.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -54,15 +61,25 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsComposablePartCatalogFactoryTests.cs" />
-    <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeRootTests.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\InstanceExportAttributeTests.cs" />
+    <Compile Include="ServiceModel\Activation\MefServiceHostFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DevUtils.MEFExtensions.Core\DevUtils.MEFExtensions.Core.csproj">
-      <Project>{41a09498-d14e-4713-8232-7ac61f0e7015}</Project>
+      <Project>{41A09498-D14E-4713-8232-7AC61F0E7015}</Project>
       <Name>DevUtils.MEFExtensions.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevUtils.MEFExtensions.WCF\DevUtils.MEFExtensions.WCF.csproj">
+      <Project>{821444d2-4d4b-4268-acd1-6f7dd1d7af74}</Project>
+      <Name>DevUtils.MEFExtensions.WCF</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DevUtils.snk" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
