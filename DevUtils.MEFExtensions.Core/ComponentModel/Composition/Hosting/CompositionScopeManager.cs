@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
@@ -42,25 +43,16 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		public CompositionScopeManager(
 			IComposablePartCatalogFactory catalogFactory)
-			: this(null, false, null)
+			: this(null, catalogFactory)
 		{
-			_catalogFactory = catalogFactory;
 		}
 
 		public CompositionScopeManager(
 			string scope,
 			IComposablePartCatalogFactory catalogFactory)
-			: this(scope, false, null)
+			: this(scope, false, null,  null)
 		{
 			_catalogFactory = catalogFactory;
-		}
-
-		public CompositionScopeManager(
-			string scope, 
-			bool cascadeDelete, 
-			CompositionScopeManager parentManager)
-			: this(scope, cascadeDelete, null, parentManager)
-		{
 		}
 
 		public CompositionScopeManager(
@@ -130,32 +122,22 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			return ret;
 		}
 
-		public ICompositionScopeManager CreateCompositionScopeManager(string scope)
-		{
-			var ret = CreateCompositionScopeManager(scope, true);
-			return ret;
-		}
-
-		public ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete)
-		{
-			CheckScopeName(scope);
-
-			var ret = new CompositionScopeManager(scope, cascadeDelete, this);
-			return ret;
-		}
-
-		public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog customCatalog)
-		{
-			var ret = CreateCompositionScopeManager(scope, true, customCatalog);
-			return ret;
-		}
-
-		public ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete, ComposablePartCatalog customCatalog)
+		public ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog customCatalog = null, bool cascadeDelete = true, bool initializeModules = true)
 		{
 			CheckScopeName(scope);
 
 			var ret = new CompositionScopeManager(scope, cascadeDelete, customCatalog, this);
+
+			if (initializeModules)
+			{
+				ret.InitializeModules();
+			}
 			return ret;
+		}
+
+		public void InitializeModules()
+		{
+			Container.InitializeModules(ScopeFullName);
 		}
 
 		#region Implementation of IDisposable

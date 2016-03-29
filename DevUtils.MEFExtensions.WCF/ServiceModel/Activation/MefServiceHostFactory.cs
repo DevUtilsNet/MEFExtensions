@@ -5,9 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
 using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations;
-using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.Primitives;
 using DevUtils.MEFExtensions.WCF.ServiceModel.Description;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 
 namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 {
@@ -16,12 +14,12 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 				 : ServiceHostFactory
 	{
 		/// <summary> Name of the instance scope. </summary>
-		public static string InstanceScopeName { get; set; } = InstanceExportAttribute.InstanceScopeName;
+		public static string InstanceScopeName { get; set; } = InstanceExportAttribute.ScopeName;
 
 		/// <summary> Gets or sets the name of the service host scope. </summary>
 		///
 		/// <value> The name of the service host scope. </value>
-		public static string ServiceHostScopeName { get; set; } = ServiceHostExportAttribute.ServiceHostScopeName;
+		public static string ServiceHostScopeName { get; set; } = ServiceHostExportAttribute.ScopeName;
 
 		/// <summary> Gets or sets the manager for application scope. </summary>
 		///
@@ -36,8 +34,6 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Activation
 		private static void OnOpening(Type serviceType, object sender)
 		{
 			var scopeManager = ApplicationScopeManager.CreateCompositionScopeManager(ServiceHostScopeName);
-
-			scopeManager.Container.InitializeModules<IServiceHostModule>();
 
 			AddBehavior(serviceType, (ServiceHost)sender, scopeManager);
 		}

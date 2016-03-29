@@ -55,7 +55,9 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ComponentModel\Composition\DataAnnotations\InstanceExportAttribute.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\InstanceModuleExportAttribute.cs" />
     <Compile Include="ComponentModel\Composition\DataAnnotations\ServiceHostExportAttribute.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\ServiceHostModuleExportAttribute.cs" />
     <Compile Include="ComponentModel\Composition\Primitives\IInstanceModule.cs" />
     <Compile Include="ComponentModel\Composition\Primitives\IServiceHostModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

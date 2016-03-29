@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 {
@@ -13,11 +12,11 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <summary>
 		/// Name of the scope.
 		/// </summary>
-		public const string ApplicationScopeName = "Application";
+		public new const string ScopeName = "Application";
 
 		/// <summary> Default constructor. </summary>
 		public ApplicationExportAttribute()
-			: base(ApplicationScopeName)
+			: base(ScopeName)
 		{
 		}
 
@@ -25,7 +24,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="contractType"> Type of the contract. </param>
 		public ApplicationExportAttribute(Type contractType)
-			: base(ApplicationScopeName, contractType)
+			: base(ScopeName, contractType)
 		{
 		}
 
@@ -33,7 +32,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="contractName"> Name of the contract. </param>
 		public ApplicationExportAttribute(string contractName)
-			: base(ApplicationScopeName, contractName)
+			: base(ScopeName, contractName)
 		{
 		}
 
@@ -42,7 +41,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="contractName"> Name of the contract. </param>
 		/// <param name="contractType"> Type of the contract. </param>
 		public ApplicationExportAttribute(string contractName, Type contractType)
-			: base(ApplicationScopeName, contractName, contractType)
+			: base(ScopeName, contractName, contractType)
 		{
 		}
 
@@ -51,7 +50,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
 		/// <param name="contractName">				 Name of the contract. </param>
 		protected ApplicationExportAttribute(string descendantScopeName, string contractName)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName)
+			: base(CombainScopes(ScopeName, descendantScopeName), contractName)
 		{
 		}
 
@@ -61,7 +60,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <param name="contractName">				 Name of the contract. </param>
 		/// <param name="contractType">				 Type of the contract. </param>
 		protected ApplicationExportAttribute(string descendantScopeName, string contractName, Type contractType)
-			: base(CombainScopes(ApplicationScopeName, descendantScopeName), contractName, contractType)
+			: base(CombainScopes(ScopeName, descendantScopeName), contractName, contractType)
 		{
 		}
 	}

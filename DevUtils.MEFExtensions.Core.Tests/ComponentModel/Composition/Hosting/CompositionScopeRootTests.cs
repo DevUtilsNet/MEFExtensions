@@ -12,18 +12,27 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 {
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-	public class TestExportAttribute
+	class TestExportAttribute
 		: ApplicationExportAttribute
 	{
-		public const string TestScopeName = "Test";
+		public new const string ScopeName = "Test";
 
 		public TestExportAttribute()
-			: base(TestScopeName, (string)null)
+			: base(ScopeName, (string)null)
 		{
 		}
 
 		public TestExportAttribute(Type contractType)
-			: base(TestScopeName, null, contractType)
+			: base(ScopeName, null, contractType)
+		{
+		}
+	}
+
+	class TestModuleExportAttribute
+		: ApplicationModuleExportAttribute
+	{
+		public TestModuleExportAttribute()
+			: base(TestExportAttribute.ScopeName)
 		{
 		}
 	}
@@ -102,29 +111,81 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 		#endregion
 	}
 
-	[Export]
-	[ApplicationExport(typeof(IApplicationModule))]
-	class CompositionScopeRootTestsExportApplication
+	[ApplicationModuleExport]
+	class CompositionScopeRootTestsExportApplicationModule
 		: IDisposable
 		, IApplicationModule
 	{
-		public bool DisposeWasCalling { get; set; }
-		public bool InitializeWasCalling { get; set; }
+		public static int CtorCount { get; set; }
+		public static int DisposeCount { get; set; }
+		public static int InitializeCount { get; set; }
 
-		#region Implementation of IDisposable
-
-		public void Dispose()
+		public CompositionScopeRootTestsExportApplicationModule()
 		{
-			DisposeWasCalling = true;
+			++CtorCount;
 		}
 
-		#endregion
+		public static void Reset()
+		{
+			CtorCount = 0;
+			DisposeCount = 0;
+			InitializeCount = 0;
+		}
 
 		#region Implementation of IScopeModule
 
 		public void Initialize()
 		{
-			InitializeWasCalling = true;
+			++InitializeCount;
+		}
+
+		#endregion
+
+		#region Implementation of IDisposable
+
+		public void Dispose()
+		{
+			++DisposeCount;
+		}
+
+		#endregion
+	}
+
+	[TestModuleExport]
+	class CompositionScopeRootTestsExportTestModule
+		: IDisposable
+		, IApplicationModule
+	{
+		public static int CtorCount { get; set; }
+		public static int DisposeCount { get; set; }
+		public static int InitializeCount { get; set; }
+
+		public CompositionScopeRootTestsExportTestModule()
+		{
+			++CtorCount;
+		}
+
+		public static void Reset()
+		{
+			CtorCount = 0;
+			DisposeCount = 0;
+			InitializeCount = 0;
+		}
+
+		#region Implementation of IScopeModule
+
+		public void Initialize()
+		{
+			++InitializeCount;
+		}
+
+		#endregion
+
+		#region Implementation of IDisposable
+
+		public void Dispose()
+		{
+			++DisposeCount;
 		}
 
 		#endregion
@@ -155,20 +216,20 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 		{
 			using (var manager0 = CompositionScopeRoot.CreateRootScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly()))))
 			{
-				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName))
+				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName))
 				{
-					Assert.AreEqual(ApplicationExportAttribute.ApplicationScopeName, manager1.ScopeName);
+					Assert.AreEqual(ApplicationExportAttribute.ScopeName, manager1.ScopeName);
 					Assert.AreEqual(new ApplicationExportAttribute().ScopeFullName, manager1.ScopeFullName);
-					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.TestScopeName))
+					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.ScopeName))
 					{
-						Assert.AreEqual(TestExportAttribute.TestScopeName, manager2.ScopeName);
+						Assert.AreEqual(TestExportAttribute.ScopeName, manager2.ScopeName);
 						Assert.AreEqual(new TestExportAttribute().ScopeFullName, manager2.ScopeFullName);
 
 						Assert.IsTrue(manager2.Container.GetExportedValues<ICompositionScopeManager>().Select(s => s.ScopeName).SequenceEqual(
 							new[]
 							{
-								TestExportAttribute.TestScopeName,
-								ApplicationExportAttribute.ApplicationScopeName,
+								TestExportAttribute.ScopeName,
+								ApplicationExportAttribute.ScopeName,
 								null
 							}));
 						Assert.IsTrue(manager2.Container.GetExportedValues<ICompositionScopeManager>().Select(s => s.ScopeFullName).SequenceEqual(
@@ -195,11 +256,11 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			{
 				value0 = manager0.Container.GetExportedValue<CompositionScopeRootTestsExport0>();
 				CompositionScopeRootTestsExport1 value1;
-				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName))
+				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName))
 				{
 					value1 = manager1.Container.GetExportedValue<CompositionScopeRootTestsExport1>();
 					CompositionScopeRootTestsExport2 value2;
-					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.TestScopeName))
+					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.ScopeName))
 					{
 						value2 = manager2.Container.GetExportedValue<CompositionScopeRootTestsExport2>();
 					}
@@ -223,10 +284,10 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			using (var manager0 = CompositionScopeRoot.CreateRootScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly()))))
 			{
 				value0 = manager0.Container.GetExportedValue<CompositionScopeRootTestsExport0>();
-				var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName);
+				var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName);
 
 				value1 = manager1.Container.GetExportedValue<CompositionScopeRootTestsExport1>();
-				var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.TestScopeName);
+				var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.ScopeName);
 				value2 = manager2.Container.GetExportedValue<CompositionScopeRootTestsExport2>();
 			}
 
@@ -243,11 +304,11 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			{
 				value0 = manager0.Container.GetExportedValue<ICompositionScopeRootTestsExport0>();
 				ICompositionScopeRootTestsExport1 value1;
-				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName))
+				using (var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName))
 				{
 					value1 = manager1.Container.GetExportedValue<ICompositionScopeRootTestsExport1>();
 					ICompositionScopeRootTestsExport2 value2;
-					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.TestScopeName))
+					using (var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.ScopeName))
 					{
 						value2 = manager2.Container.GetExportedValue<ICompositionScopeRootTestsExport2>();
 					}
@@ -271,10 +332,10 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			using (var manager0 = CompositionScopeRoot.CreateRootScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly()))))
 			{
 				value0 = manager0.Container.GetExportedValue<CompositionScopeRootTestsExport0>();
-				var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName);
+				var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName);
 
 				value1 = manager1.Container.GetExportedValue<CompositionScopeRootTestsExport1>();
-				var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.TestScopeName, false);
+				var manager2 = manager1.CreateCompositionScopeManager(TestExportAttribute.ScopeName, null, false);
 				value2 = manager2.Container.GetExportedValue<CompositionScopeRootTestsExport2>();
 			}
 
@@ -289,7 +350,7 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 			var manager0 = CompositionScopeRoot.CreateRootScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
 			var value0 = manager0.Container.GetExportedValue<ICompositionScopeRootTestsExport0>();
 
-			var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName);
+			var manager1 = manager0.CreateCompositionScopeManager(ApplicationExportAttribute.ScopeName);
 
 			var value1 = manager1.Container.GetExportedValue<ICompositionScopeRootTestsExport1>();
 
@@ -304,15 +365,40 @@ namespace DevUtils.MEFExtensions.Core.Tests.ComponentModel.Composition.Hosting
 		[TestMethod]
 		public void CreateApplicationScopeManagerTest01()
 		{
-			var manager0 = CompositionScopeRoot.CreateApplicationScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
-			var value = manager0.Container.GetExportedValue<CompositionScopeRootTestsExportApplication>();
+			CompositionScopeRootTestsExportTestModule.Reset();
+			CompositionScopeRootTestsExportApplicationModule.Reset();
 
-			Assert.IsFalse(value.DisposeWasCalling);
-			Assert.IsTrue(value.InitializeWasCalling);
+			var manager0 = CompositionScopeRoot.CreateApplicationScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+			Assert.AreEqual(0, CompositionScopeRootTestsExportTestModule.CtorCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportTestModule.InitializeCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportTestModule.DisposeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.InitializeCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportApplicationModule.DisposeCount);
+
+			var manager1 = manager0.CreateCompositionScopeManager(TestExportAttribute.ScopeName);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.InitializeCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportTestModule.DisposeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.InitializeCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportApplicationModule.DisposeCount);
+
+			manager1.Dispose();
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.InitializeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.DisposeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.InitializeCount);
+			Assert.AreEqual(0, CompositionScopeRootTestsExportApplicationModule.DisposeCount);
 
 			manager0.Dispose();
-
-			Assert.IsTrue(value.DisposeWasCalling);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.InitializeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportTestModule.DisposeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.CtorCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.InitializeCount);
+			Assert.AreEqual(1, CompositionScopeRootTestsExportApplicationModule.DisposeCount);
 		}
 	}
 }

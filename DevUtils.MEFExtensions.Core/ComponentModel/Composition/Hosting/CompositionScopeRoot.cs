@@ -1,5 +1,4 @@
 ﻿using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
@@ -23,8 +22,8 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		/// <returns> The new application scope manager. </returns>
 		public static ICompositionScopeManager CreateApplicationScopeManager(IComposablePartCatalogFactory catalogFactory)
 		{
-			var ret = new CompositionScopeManager(ApplicationExportAttribute.ApplicationScopeName, catalogFactory);
-			ret.Container.InitializeModules<IApplicationModule>();
+			var ret = new CompositionScopeManager(ApplicationExportAttribute.ScopeName, catalogFactory);
+			ret.InitializeModules();
 			return ret;
 		}
 	}

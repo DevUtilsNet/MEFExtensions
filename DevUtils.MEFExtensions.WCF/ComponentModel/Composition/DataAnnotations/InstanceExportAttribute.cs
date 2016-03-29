@@ -10,11 +10,11 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		: ServiceHostExportAttribute
 	{
 		/// <summary> Name of the instance scope. </summary>
-		public const string InstanceScopeName = "Instance";
+		public new const string ScopeName = "Instance";
 
 		/// <summary> Default constructor. </summary>
 		public InstanceExportAttribute()
-			: base(InstanceScopeName, null, null)
+			: base(ScopeName, null, null)
 		{
 		}
 
@@ -22,7 +22,7 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="contractType"> Type of the contract. </param>
 		public InstanceExportAttribute(Type contractType)
-			: base(InstanceScopeName, null, contractType)
+			: base(ScopeName, null, contractType)
 		{
 		}
 
@@ -30,7 +30,7 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		///
 		/// <param name="contractName"> Name of the contract. </param>
 		public InstanceExportAttribute(string contractName)
-			: base(InstanceScopeName, contractName, null)
+			: base(ScopeName, contractName, null)
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		/// <param name="contractName"> Name of the contract. </param>
 		/// <param name="contractType"> Type of the contract. </param>
 		public InstanceExportAttribute(string contractName, Type contractType)
-			: base(InstanceScopeName, contractName, contractType)
+			: base(ScopeName, contractName, contractType)
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
 		/// <param name="contractName">				 Name of the contract. </param>
 		protected InstanceExportAttribute(string descendantScopeName, string contractName)
-			: base(CombainScopes(InstanceScopeName, descendantScopeName), contractName)
+			: base(CombainScopes(ScopeName, descendantScopeName), contractName)
 		{
 		}
 
@@ -58,7 +58,7 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 		/// <param name="contractName">				 Name of the contract. </param>
 		/// <param name="contractType">				 Type of the contract. </param>
 		protected InstanceExportAttribute(string descendantScopeName, string contractName, Type contractType)
-			: base(CombainScopes(InstanceScopeName, descendantScopeName), contractName, contractType)
+			: base(CombainScopes(ScopeName, descendantScopeName), contractName, contractType)
 		{
 		}
 	}

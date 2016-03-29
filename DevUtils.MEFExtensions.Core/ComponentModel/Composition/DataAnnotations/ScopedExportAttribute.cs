@@ -9,6 +9,11 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 	public class ScopedExportAttribute
 		 : ExportAttribute
 	{
+		/// <summary> Gets or sets the name of the scope. </summary>
+		///
+		/// <value> The name of the scope. </value>
+		public const string ScopeName = null;
+
 		/// <summary> Gets or sets the name of the scope full. </summary>
 		///
 		/// <value> The name of the scope full. </value>

@@ -30,8 +30,6 @@ namespace DevUtils.MEFExtensions.WCF.ServiceModel.Dispatcher
 		{
 			var manager = _scopeManager.CreateCompositionScopeManager(MefServiceHostFactory.InstanceScopeName);
 
-			manager.Container.InitializeModules<IInstanceModule>();
-
 			var ret = manager.Container.GetExportedValue<T>();
 
 			instanceContext.Extensions.Add(new MefInstanceContext(manager));

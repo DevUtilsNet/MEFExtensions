@@ -38,34 +38,12 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		/// <summary> Creates composition scope manager. </summary>
 		///
-		/// <param name="scope"> The scope. </param>
+		/// <param name="scope">						 The scope. </param>
+		/// <param name="customCatalog">		 The catalog. </param>
+		/// <param name="cascadeDelete">		 true to cascade delete. </param>
+		/// <param name="initializeModules"> true to initialize modules. </param>
 		///
 		/// <returns> The new composition scope manager. </returns>
-		ICompositionScopeManager CreateCompositionScopeManager(string scope);
-
-		/// <summary> Creates composition scope manager. </summary>
-		///
-		/// <param name="scope">				 The scope. </param>
-		/// <param name="cascadeDelete"> true to cascade delete. </param>
-		///
-		/// <returns> The new composition scope manager. </returns>
-		ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete);
-
-		/// <summary> Creates composition scope manager. </summary>
-		///
-		/// <param name="scope">   The scope. </param>
-		/// <param name="customCatalog"> The catalog. </param>
-		///
-		/// <returns> The new composition scope manager. </returns>
-		ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog customCatalog);
-
-		/// <summary> Creates composition scope manager. </summary>
-		///
-		/// <param name="scope">				 The scope. </param>
-		/// <param name="cascadeDelete"> true to cascade delete. </param>
-		/// <param name="customCatalog"> The catalog. </param>
-		///
-		/// <returns> The new composition scope manager. </returns>
-		ICompositionScopeManager CreateCompositionScopeManager(string scope, bool cascadeDelete, ComposablePartCatalog customCatalog);
+		ICompositionScopeManager CreateCompositionScopeManager(string scope, ComposablePartCatalog customCatalog = null, bool cascadeDelete = true, bool initializeModules = true);
 	}
 }

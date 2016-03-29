@@ -6,9 +6,10 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensi
 {
 	static class CompositionContainerExtensions
 	{
-		public static void InitializeModules<T>(this CompositionContainer container) where T : IScopeModule
+		public static void InitializeModules(this CompositionContainer container, string fullNameScope)
 		{
-			container.GetExportedValues<T>().ForEach(f => f.Initialize());
+			var modules = container.GetExportedValues<IScopeModule>(fullNameScope);
+			modules.ForEach(f => f.Initialize());
 		}
 	}
 }

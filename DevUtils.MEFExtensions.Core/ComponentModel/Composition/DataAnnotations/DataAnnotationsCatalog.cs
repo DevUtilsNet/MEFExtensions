@@ -58,11 +58,12 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 					{
 						object identityMetadataName2;
 						s.Metadata.TryGetValue(CompositionConstants.ExportTypeIdentityMetadataName, out identityMetadataName2);
-						var ret = s.ContractName == item.ContractName && identityMetadataName1 == identityMetadataName2;
+						var ret = identityMetadataName1 == identityMetadataName2 //&& s.ContractName == item.ContractName
+						;
 						return ret;
 					}))
 				{
-					throw new CompositionException($"The definition cannot have a duplicate Contact name and Type identity in different scopes. {definition}");
+					throw new CompositionException($"Duplicate Type identity in different scopes are not supported. {definition}");
 				}
 			}
 		}

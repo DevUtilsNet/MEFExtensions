@@ -57,6 +57,8 @@
     </Compile>
     <Compile Include="Collections\Generic\Extensions\EnumerableExtensions.cs" />
     <Compile Include="ComponentModel\Composition\DataAnnotations\ApplicationExportAttribute.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\ApplicationModuleExportAttribute.cs" />
+    <Compile Include="ComponentModel\Composition\DataAnnotations\ModuleExportAttribute.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\ComposablePartCatalogCollection.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManager.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeManagerDisposeGuard.cs" />

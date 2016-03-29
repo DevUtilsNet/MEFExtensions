@@ -56,26 +56,32 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 		#endregion
 	}
 
-	[ServiceHostExport(typeof(IServiceHostModule))]
+	[ServiceHostModuleExport]
 	public class MefServiceHostFactoryTestsServiceHostModule 
 		: IServiceHostModule
 		, IDisposable
 	{
-		public bool DisposeWasCalling { get; set; }
-		public bool InitializeWasCalling { get; set; }
-
-		public static MefServiceHostFactoryTestsServiceHostModule Instance { get; set; }
+		public static int CtorCount { get; set; }
+		public static int DisposeCount { get; set; }
+		public static int InitializeCount { get; set; }
 
 		public MefServiceHostFactoryTestsServiceHostModule()
 		{
-			Instance = this;
+			++CtorCount;
+		}
+
+		public static void Reset()
+		{
+			CtorCount = 0;
+			DisposeCount = 0;
+			InitializeCount = 0;
 		}
 
 		#region Implementation of IScopeModule
 
 		public void Initialize()
 		{
-			InitializeWasCalling = true;
+			++InitializeCount;
 		}
 
 		#endregion
@@ -84,20 +90,22 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 
 		public void Dispose()
 		{
-			DisposeWasCalling = true;
+			++DisposeCount;
 		}
 
 		#endregion
 	}
 
 	[Export]
-	[InstanceExport(typeof(IInstanceModule))]
+	[InstanceModuleExport]
 	public class MefServiceHostFactoryTestsInstanceModule
 		: IInstanceModule
 		, IDisposable
 	{
-		public bool DisposeWasCalling { get; set; }
-		public bool InitializeWasCalling { get; set; }
+		public static int CtorCount { get; set; }
+		public static int DisposeCount { get; set; }
+		public static int InitializeCount { get; set; }
+
 		public ICompositionScopeManager Manager { get; }
 
 		public static MefServiceHostFactoryTestsInstanceModule Instance { get; set; }
@@ -108,13 +116,21 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 		{
 			Manager = manager;
 			Instance = this;
+			++CtorCount;
+		}
+
+		public static void Reset()
+		{
+			CtorCount = 0;
+			DisposeCount = 0;
+			InitializeCount = 0;
 		}
 
 		#region Implementation of IScopeModule
 
 		public void Initialize()
 		{
-			InitializeWasCalling = true;
+			++InitializeCount;
 		}
 
 		#endregion
@@ -123,7 +139,7 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 
 		public void Dispose()
 		{
-			DisposeWasCalling = true;
+			++DisposeCount;
 		}
 
 		#endregion
@@ -170,29 +186,6 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 		[TestMethod]
 		public void CreateServiceHostTest01()
 		{
-			using (var host = MefServiceHostFactory.CreateServiceHost2(typeof(MefServiceHostFactoryTestsService), new[] { new Uri("net.pipe://localhost/") }))
-			{
-				var endPoint = new ServiceEndpoint(
-					ContractDescription.GetContract(typeof (IMefServiceHostFactoryTestsContract)),
-					new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/MefServiceHostFactoryTests"));
-
-				host.AddServiceEndpoint(endPoint);
-
-				host.Open();
-
-				using (var client = new MefServiceHostFactoryTestsClient(endPoint))
-				{
-					client.Test();
-					Assert.IsFalse(MefServiceHostFactoryTestsService.Instance.DisposeWasCalling);
-				}
-				Thread.Sleep(100);
-				Assert.IsTrue(MefServiceHostFactoryTestsService.Instance.DisposeWasCalling);
-			}
-		}
-
-		[TestMethod]
-		public void CreateServiceHostTest02()
-		{
 			using (var host = MefServiceHostFactory.CreateServiceHost2(typeof(MefServiceHostFactoryTestsRawService), new[] { new Uri("net.pipe://localhost/") }))
 			{
 				var endPoint = new ServiceEndpoint(
@@ -211,9 +204,10 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 		}
 
 		[TestMethod]
-		public void CreateServiceHostTest03()
+		public void CreateServiceHostTest02()
 		{
-			MefServiceHostFactoryTestsServiceHostModule.Instance = null;
+			MefServiceHostFactoryTestsInstanceModule.Reset();
+			MefServiceHostFactoryTestsServiceHostModule.Reset();
 
 			using (var host = MefServiceHostFactory.CreateServiceHost2(typeof(MefServiceHostFactoryTestsService), new[] { new Uri("net.pipe://localhost/") }))
 			{
@@ -224,20 +218,40 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 				host.AddServiceEndpoint(endPoint);
 
 				host.Open();
-				Assert.IsTrue(MefServiceHostFactoryTestsServiceHostModule.Instance.InitializeWasCalling);
+				Assert.AreEqual(0, MefServiceHostFactoryTestsInstanceModule.CtorCount);
+				Assert.AreEqual(0, MefServiceHostFactoryTestsInstanceModule.InitializeCount);
+				Assert.AreEqual(0, MefServiceHostFactoryTestsInstanceModule.DisposeCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.CtorCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.InitializeCount);
+				Assert.AreEqual(0, MefServiceHostFactoryTestsServiceHostModule.DisposeCount);
 
 				using (var client = new MefServiceHostFactoryTestsClient(endPoint))
 				{
 					client.Test();
-					Assert.IsTrue(MefServiceHostFactoryTestsInstanceModule.Instance.InitializeWasCalling);
+					Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.CtorCount);
+					Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.InitializeCount);
+					Assert.AreEqual(0, MefServiceHostFactoryTestsInstanceModule.DisposeCount);
+					Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.CtorCount);
+					Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.InitializeCount);
+					Assert.AreEqual(0, MefServiceHostFactoryTestsServiceHostModule.DisposeCount);
 
 					Assert.AreEqual(MefServiceHostFactoryTestsInstanceModule.Instance, MefServiceHostFactoryTestsService.Instance.Module);
 					Assert.AreEqual(MefServiceHostFactoryTestsInstanceModule.Instance.Manager, MefServiceHostFactoryTestsService.Instance.Manager);
 				}
 				Thread.Sleep(100);
-				Assert.IsTrue(MefServiceHostFactoryTestsInstanceModule.Instance.DisposeWasCalling);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.CtorCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.InitializeCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.DisposeCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.CtorCount);
+				Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.InitializeCount);
+				Assert.AreEqual(0, MefServiceHostFactoryTestsServiceHostModule.DisposeCount);
 			}
-			Assert.IsTrue(MefServiceHostFactoryTestsServiceHostModule.Instance.DisposeWasCalling);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.CtorCount);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.InitializeCount);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsInstanceModule.DisposeCount);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.CtorCount);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.InitializeCount);
+			Assert.AreEqual(1, MefServiceHostFactoryTestsServiceHostModule.DisposeCount);
 		}
 	}
 }
