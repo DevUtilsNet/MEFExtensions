@@ -17,5 +17,13 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			: base(scopeFullName, scopeFullName, typeof(IScopeModule))
 		{
 		}
+
+		/// <summary> Constructor. </summary>
+		///
+		/// <param name="scopeName"> Name of the scope. </param>
+		public ModuleExportAttribute(ScopeName scopeName)
+			: base(scopeName, scopeName.FullName, typeof(IScopeModule))
+		{
+		}
 	}
 }

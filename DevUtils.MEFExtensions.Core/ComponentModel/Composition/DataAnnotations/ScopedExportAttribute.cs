@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 {
@@ -12,7 +13,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 		/// <summary> Gets or sets the name of the scope. </summary>
 		///
 		/// <value> The name of the scope. </value>
-		public const string ScopeName = null;
+		public static readonly ScopeName ScopeName = default(ScopeName);
 
 		/// <summary> Gets or sets the name of the scope full. </summary>
 		///
@@ -72,15 +73,43 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			ScopeFullName = scopeFullName;
 		}
 
-		/// <summary> Combain scopes. </summary>
+		/// <summary> Constructor. </summary>
 		///
-		/// <param name="scopes"> A variable-length parameters list containing scopes. </param>
-		///
-		/// <returns> A string. </returns>
-		public static string CombainScopes(params string[] scopes)
+		/// <param name="scopeName"> Gets or sets the name of the scope. </param>
+		public ScopedExportAttribute(ScopeName scopeName)
 		{
-			var ret = string.Join("/", scopes);
-			return ret;
+			ScopeFullName = scopeName.FullName;
+		}
+
+		/// <summary> Constructor. </summary>
+		///
+		/// <param name="scopeName">	  Gets or sets the name of the scope. </param>
+		/// <param name="contractType"> Type of the contract. </param>
+		public ScopedExportAttribute(ScopeName scopeName, Type contractType)
+			: base(contractType)
+		{
+			ScopeFullName = scopeName.FullName;
+		}
+
+		/// <summary> Constructor. </summary>
+		///
+		/// <param name="scopeName">	  Gets or sets the name of the scope. </param>
+		/// <param name="contractName"> Name of the contract. </param>
+		public ScopedExportAttribute(ScopeName scopeName, string contractName)
+			: base(contractName)
+		{
+			ScopeFullName = scopeName.FullName;
+		}
+
+		/// <summary> Constructor. </summary>
+		///
+		/// <param name="scopeName">	  Gets or sets the name of the scope. </param>
+		/// <param name="contractName"> Name of the contract. </param>
+		/// <param name="contractType"> Type of the contract. </param>
+		public ScopedExportAttribute(ScopeName scopeName, string contractName, Type contractType)
+			: base(contractName, contractType)
+		{
+			ScopeFullName = scopeName.FullName;
 		}
 	}
 }

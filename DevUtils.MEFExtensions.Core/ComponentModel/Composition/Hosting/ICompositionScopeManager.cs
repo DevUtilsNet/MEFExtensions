@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 {
@@ -18,7 +19,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 		/// <summary> Gets the name of the scope full. </summary>
 		///
 		/// <value> The name of the scope full. </value>
-		string ScopeFullName { get; }
+		ScopeName ScopeFullName { get; }
 
 
 		/// <summary> Gets the catalog. </summary>

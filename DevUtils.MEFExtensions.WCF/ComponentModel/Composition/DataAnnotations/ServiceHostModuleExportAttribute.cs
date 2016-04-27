@@ -1,4 +1,5 @@
 ﻿using DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 {
@@ -8,15 +9,15 @@ namespace DevUtils.MEFExtensions.WCF.ComponentModel.Composition.DataAnnotations
 	{
 		/// <summary> Default constructor. </summary>
 		public ServiceHostModuleExportAttribute()
-			: base(ServiceHostExportAttribute.ScopeName)
+			: base(new ScopeName(ServiceHostExportAttribute.ScopeName))
 		{
 		}
 
 		/// <summary> Specialised constructor for use only by derived class. </summary>
 		///
 		/// <param name="descendantScopeName"> Name of the descendant scope. </param>
-		protected ServiceHostModuleExportAttribute(string descendantScopeName)
-			: base(CombainScopes(ServiceHostExportAttribute.ScopeName, descendantScopeName))
+		protected ServiceHostModuleExportAttribute(ScopeName descendantScopeName)
+			: base(ServiceHostExportAttribute.ScopeName / descendantScopeName)
 		{
 		}
 	}

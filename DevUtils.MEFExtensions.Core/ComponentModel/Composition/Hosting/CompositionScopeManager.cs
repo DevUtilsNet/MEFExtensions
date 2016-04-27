@@ -20,18 +20,21 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 
 		public string ScopeName { get; }
 
-		public string ScopeFullName
+		public ScopeName ScopeFullName
 		{
 			get
 			{
 				var parentFullName = ParentManager?.Container.GetExportedValue<ICompositionScopeManager>().ScopeFullName;
-				if (string.IsNullOrEmpty(parentFullName))
+				if (parentFullName.HasValue)
 				{
-					return ScopeName;
+					var ret = parentFullName.Value / ScopeName;
+					return ret;
 				}
-
-				var ret = parentFullName + "/" + ScopeName;
-				return ret;
+				else
+				{
+					var ret = new ScopeName(ScopeName);
+					return ret;
+				}
 			}
 		}
 
@@ -74,19 +77,14 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting
 			}
 		}
 
-		public static string CheckScopeName(string scope)
+		private static void CheckScopeName(string scopeName)
 		{
-			if (string.IsNullOrEmpty(scope))
-			{
-				throw new ArgumentException("The Scope name cannot be null or empty", nameof(scope));
-			}
+			Primitives.ScopeName.CheckSingleScopeName(scopeName);
 
-			if (scope.IndexOf('/') != -1)
+			if (scopeName == "*" || scopeName == "**")
 			{
-				throw new ArgumentException("The Scope name cannot contain '/'", nameof(scope));
+				throw new ArgumentException("The Scope name cannot be '*' or '**'", nameof(scopeName));
 			}
-
-			return scope;
 		}
 
 		private CompositionContainer ContainerFactory()

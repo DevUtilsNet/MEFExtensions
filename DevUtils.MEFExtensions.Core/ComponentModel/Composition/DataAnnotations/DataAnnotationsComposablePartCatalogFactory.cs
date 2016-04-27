@@ -10,7 +10,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			: IComposablePartCatalogFactory
 	{
 		private readonly ComposablePartCatalog _rootCatalog;
-		private readonly Dictionary<string, ComposablePartCatalog> _cachedCatalogs = new Dictionary<string, ComposablePartCatalog>();
+		private readonly Dictionary<ScopeName, ComposablePartCatalog> _cachedCatalogs = new Dictionary<ScopeName, ComposablePartCatalog>();
 
 		/// <summary> Constructor. </summary>
 		///
@@ -22,20 +22,18 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		/// <summary> Gets composable part catalog. </summary>
 		///
-		/// <param name="scopeFullName"> The scope full. </param>
+		/// <param name="scopeName"> Name of the full scope. </param>
 		///
 		/// <returns> The composable part catalog. </returns>
-		public ComposablePartCatalog GetComposablePartCatalog(string scopeFullName)
+		public ComposablePartCatalog GetComposablePartCatalog(ScopeName scopeName)
 		{
-			scopeFullName = scopeFullName ?? string.Empty;
-
 			ComposablePartCatalog ret;
 			lock (_cachedCatalogs)
 			{
-				if (!_cachedCatalogs.TryGetValue(scopeFullName, out ret))
+				if (!_cachedCatalogs.TryGetValue(scopeName, out ret))
 				{
-					ret = new DataAnnotationsCatalog(_rootCatalog, scopeFullName);
-					_cachedCatalogs[scopeFullName] = ret;
+					ret = new DataAnnotationsCatalog(_rootCatalog, scopeName);
+					_cachedCatalogs[scopeName] = ret;
 				}
 			}
 

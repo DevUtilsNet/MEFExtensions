@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="ComponentModel\Composition\DataAnnotations\DataAnnotationsComposablePartCatalogFactoryTests.cs" />
     <Compile Include="ComponentModel\Composition\Hosting\CompositionScopeRootTests.cs" />
+    <Compile Include="ComponentModel\Composition\Primitives\ScopeNameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

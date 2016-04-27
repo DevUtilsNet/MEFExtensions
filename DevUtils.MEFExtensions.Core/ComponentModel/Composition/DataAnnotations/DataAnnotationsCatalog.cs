@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Linq;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
+using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Primitives;
 
 namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 {
@@ -14,6 +15,7 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 			, INotifyComposablePartCatalogChanged
 	{
 		private volatile bool _isDisposed;
+		private readonly ScopeName _scopeName;
 		private readonly object _lock = new object();
 
 		private ComposablePartCatalog _rootCatalog;
@@ -21,15 +23,22 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 
 		#region Implementation of ICompositionElement
 
-		public string DisplayName { get; }
+		public string DisplayName
+		{
+			get
+			{
+				var ret = _scopeName.FullName;
+				return ret;
+			}
+		}
 
 		public ICompositionElement Origin => _rootCatalog as ICompositionElement;
 
 		#endregion
 
-		public DataAnnotationsCatalog(ComposablePartCatalog rootCatalog, string scopeFullName)
+		public DataAnnotationsCatalog(ComposablePartCatalog rootCatalog, ScopeName scopeName)
 		{
-			DisplayName = scopeFullName;
+			_scopeName = scopeName;
 			_rootCatalog = rootCatalog;
 
 			var notifyCatalog = _rootCatalog as INotifyComposablePartCatalogChanged;
@@ -38,12 +47,6 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 				notifyCatalog.Changed += OnChangedInternal;
 				notifyCatalog.Changing += OnChangingInternal;
 			}
-		}
-
-		private bool ScopeEquals(string scope)
-		{
-			var ret = (string.IsNullOrEmpty(scope) && string.IsNullOrEmpty(DisplayName)) || string.Equals(scope, DisplayName);
-			return ret;
 		}
 
 		private static void CheckDefinition(ComposablePartDefinition definition)
@@ -83,15 +86,15 @@ namespace DevUtils.MEFExtensions.Core.ComponentModel.Composition.DataAnnotations
 				var array = item as string[];
 				if (array != null)
 				{
-					if (array.Any(ScopeEquals))
+					if (array.Select(s => new ScopeName(s)).Contains(_scopeName))
 					{
 						return true;
 					}
 				}
 				else
 				{
-					var scope = item as string;
-					if (ScopeEquals(scope))
+					var scope = new ScopeName(item as string);
+					if (scope == _scopeName)
 					{
 						return true;
 					}

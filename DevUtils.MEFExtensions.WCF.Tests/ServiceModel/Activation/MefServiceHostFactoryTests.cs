@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
@@ -176,7 +175,11 @@ namespace DevUtils.MEFExtensions.WCF.Tests.ServiceModel.Activation
 	[TestClass]
 	public class MefServiceHostFactoryTests
 	{
-		private readonly ICompositionScopeManager _applicationManager = CompositionScopeRoot.CreateApplicationScopeManager(new DataAnnotationsComposablePartCatalogFactory(new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+		private readonly ICompositionScopeManager _applicationManager = CompositionScopeRoot.CreateApplicationScopeManager(new DataAnnotationsComposablePartCatalogFactory(
+			new TypeCatalog(
+				typeof(MefServiceHostFactoryTestsService), 
+				typeof(MefServiceHostFactoryTestsInstanceModule), 
+				typeof(MefServiceHostFactoryTestsServiceHostModule))));
 
 		public MefServiceHostFactoryTests()
 		{

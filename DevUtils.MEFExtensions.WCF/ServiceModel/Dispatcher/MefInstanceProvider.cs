@@ -2,9 +2,7 @@
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting;
-using DevUtils.MEFExtensions.WCF.ComponentModel.Composition.Primitives;
 using DevUtils.MEFExtensions.WCF.ServiceModel.Activation;
-using DevUtils.MEFExtensions.Core.ComponentModel.Composition.Hosting.Extensions;
 
 namespace DevUtils.MEFExtensions.WCF.ServiceModel.Dispatcher
 {
