@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+	<metadata minClientVersion="2.8.1">
+		<frameworkAssemblies>
+		</frameworkAssemblies>
+		<dependencies>
+			<dependency id="DevUtils.MEFExtensions.Core" version="0.0.1" />
+		</dependencies>
+		<id>DevUtils.MEFExtensions.Web</id>
+		<authors>DevUtils</authors>
+		<version>0.0.1</version>
+		<title>DevUtils MEF Extensions for Web</title>
+		<copyright>Copyright © 2016 DevUtils</copyright>
+		<tags>MEF IoC DEPENDENCY INJECTION Web</tags>
+		<projectUrl>https://github.com/DevUtilsNet/MEFExtensions</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<summary>MEFExtensions is a library for extends The Managed Extensibility Framework or MEF.</summary>
+		<description>MVC integration provides dependency injection integration for controllers, model binders, action filters, and views. 
+			Web API integration provides dependency injection integration for controllers, model binders, and action filters.</description>
+		<releaseNotes>
+		</releaseNotes>
+	</metadata>
+	<files>
+		<!--net45-->
+		<file src="..\Release\DevUtils.MEFExtensions.Web.dll" target="lib\net45\DevUtils.MEFExtensions.Web.dll" />
+		<file src="..\Release\DevUtils.MEFExtensions.Web.xml" target="lib\net45\DevUtils.MEFExtensions.Web.xml" />
+	</files>
+</package>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+	<metadata minClientVersion="2.8.1">
+		<frameworkAssemblies>
+		</frameworkAssemblies>
+		<id>DevUtils.MEFExtensions.Core</id>
+		<authors>DevUtils</authors>
+		<version>0.0.1</version>
+		<title>DevUtils MEF Extensions Core</title>
+		<copyright>Copyright © 2016 DevUtils</copyright>
+		<tags>MEF IoC DEPENDENCY INJECTION</tags>
+		<projectUrl>https://github.com/DevUtilsNet/MEFExtensions</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<summary>MEFExtensions is a library for extends The Managed Extensibility Framework or MEF.</summary>
+		<description>.</description>
+		<releaseNotes>
+		</releaseNotes>
+	</metadata>
+	<files>
+		<!--net45-->
+		<file src="..\Release\DevUtils.MEFExtensions.Core.dll" target="lib\net45\DevUtils.MEFExtensions.Core.dll" />
+		<file src="..\Release\DevUtils.MEFExtensions.Core.xml" target="lib\net45\DevUtils.MEFExtensions.Core.xml" />
+	</files>
+</package>
